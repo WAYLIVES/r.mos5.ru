@@ -13,20 +13,23 @@
 }
 
 .nameMenu {
-	background-color: white;
+	background-color: #2158aa;
+	padding: 0px 0px 0px 0px;
+	color: white;
 	font-size: 24px;
-	border-radius: 0px;
+	border-radius: 12px;
+	border: solid #74a1e5 6px;
 }
 
 .logoMenu {
-	padding: 18px;
-	background-color: white;
+	padding: 4px 0px 0px 0px;
+	background-color: none;
 	border-radius: 0px;
 }
 
 .bodyA {
 	padding: 60px;
-	border-radius: 0px;
+	border-radius: 6px;
 	background-color: white;
 }
 
@@ -34,4 +37,80 @@
 	background-color: ;
 	width: 100%;
 	height: 100%;
+}
+
+.blockA {
+	padding: 30px;
+	margin: 0px;
+	background-color: #efefef;
+	border: solid 1px #a8a8a8;
+	border-radius: 3px;
+}
+
+.aA {
+	padding: 18px;
+	margin: 3px 0px 0px 0px;
+	background-color: #2158aa;
+	color: white;
+	border: solid 1px #2158aa;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: 0.1s;
+	display: flex;
+}
+
+.aA:hover {
+	background-color: #74a1e5;
+	color: black;
+}
+
+.blockB {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.imgA {
+	padding: 6px;
+	margin: 3px 0px 3px 0px;
+	background-color: #efefef;
+	border: solid 1px #a8a8a8;
+	border-radius: 3px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.opiA {
+	padding: 12px;
+	margin: 0px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	background-color: #efefef;
+	border: solid 1px #a8a8a8;
+	border-radius: 0px;
+	flex-flow: row;
+}
+
+.olA {
+	margin: 12px 0px 0px 36px;
+}
+
+.ulA {
+	margin: 3px 0px 12px 36px;
+	list-style-type: disc;
+}
+
+.hrA {
+	border: solid #efefef 1px;
+}
+
+.imgB {
+	border: solid #a8a8a8 2px;
+	border-radius: 6px;
+}
+
+p {
+	margin: 6px 0px 0px 0px;
 }
