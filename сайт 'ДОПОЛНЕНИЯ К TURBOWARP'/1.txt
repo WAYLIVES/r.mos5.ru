@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Готовый Scratch-код для TurboWarp</title>
+    <style>
+        /* --- CSS Reset & Basic Styles --- */
+        :root {
+            /* Light Theme (default) */
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --card-border: #ddd;
+            --accent-color: #007bff;
+            --accent-text-color: #ffffff;
+            --secondary-bg: #e9e9e9;
+            --secondary-text: #555;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --button-bg: #e0e0e0;
+            --button-text: #333;
+            --button-hover-bg: #d5d5d5;
+            --select-bg: #fff;
+            --select-border: #ccc;
+            --new-badge-bg: #28a745; /* Green for 'New' */
+            --new-badge-text: #ffffff;
+            --download-count-color: var(--accent-text-color); /* Цвет счетчика загрузок */
+        }
+
+        .dark-theme {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --card-bg: #2c2c2c;
+            --card-border: #444;
+            --accent-color: #0d6efd;
+            --accent-text-color: #ffffff;
+            --secondary-bg: #3a3a3a;
+            --secondary-text: #bbb;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --button-bg: #444;
+            --button-text: #e0e0e0;
+            --button-hover-bg: #555;
+            --select-bg: #333;
+            --select-border: #555;
+            --new-badge-bg: #34c759; /* Brighter green for dark theme */
+            --new-badge-text: #ffffff;
+            --download-count-color: var(--accent-text-color);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .system-theme {
+                --bg-color: #1a1a1a;
+                --text-color: #e0e0e0;
+                --card-bg: #2c2c2c;
+                --card-border: #444;
+                --accent-color: #0d6efd;
+                --accent-text-color: #ffffff;
+                --secondary-bg: #3a3a3a;
+                --secondary-text: #bbb;
+                --shadow-color: rgba(0, 0, 0, 0.4);
+                --button-bg: #444;
+                --button-text: #e0e0e0;
+                --button-hover-bg: #555;
+                --select-bg: #333;
+                --select-border: #555;
+                --new-badge-bg: #34c759;
+                --new-badge-text: #ffffff;
+                --download-count-color: var(--accent-text-color);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* --- Layout & Containers --- */
+        .container {
+            width: 95%;
+            max-width: 1200px; /* Increased max-width for wider screens */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header, nav, main {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        /* --- Navigation / Controls --- */
+        nav {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: left; /* Center items when wrapped */
+            gap: 10px;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            border-radius: 0px;
+            margin-bottom: 30px;
+        }
+
+        nav > * {
+            margin: 5px; /* Add margin for spacing when wrapped */
+        }
+
+        nav label {
+            margin-right: 5px;
+            font-weight: bold;
+            color: var(--secondary-text);
+        }
+
+        nav select,
+        nav button,
+        .search-container input {
+            padding: 8px 12px;
+            border-radius: 0px;
+            border: 1px solid var(--select-border);
+            background-color: var(--select-bg);
+            color: var(--text-color);
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .search-container input{
+        	cursor: text;
+        }
+
+        nav button {
+             background-color: var(--button-bg);
+             color: var(--button-text);
+             border: none;
+        }
+        nav button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .setButton {
+        	background-color: #207FED;
+        	color: white;
+        	border-radius: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            position: relative; /* For reset button positioning */
+        }
+
+        .search-container .search-icon {
+            margin-right: 5px;
+        }
+
+        .search-container input {
+            padding-right: 30px; /* Space for the reset button */
+            flex-grow: 1; /* Allow input to take available space */
+            min-width: 150px; /* Minimum width */
+        }
+
+        .search-container .reset-search {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
+            display: none; /* Hidden by default */
+        }
+
+        /* --- Card Grid --- */
+        #card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 14px;
+            width: 100%;
+        }
+
+        /* --- Card Styling --- */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0px;
+            padding: 15px;
+            box-shadow: 0 0px 0px var(--shadow-color);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            position: relative; /* For favorite button and new badge positioning */
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        /* --- NEW BADGE STYLE --- */
+        .card .new-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: var(--new-badge-bg);
+            color: var(--new-badge-text);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 2; /* Ensure it's above the image but below the favorite button */
+            line-height: 1.2; /* Adjust line height if needed */
+        }
+        /* --- END NEW BADGE STYLE --- */
+
+        .card-image-container {
+            width: 100%;
+            aspect-ratio: 2 / 1; /* Enforce 2x1 aspect ratio */
+            overflow: hidden; /* Hide parts of image that overflow */
+            border-radius: 0px;
+            margin-bottom: 15px;
+            background-color: var(--secondary-bg); /* Placeholder bg */
+        }
+
+        .card img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Scale image to cover container */
+            object-position: center; /* Center the image */
+            border-radius: 0px;
+        }
+
+        .card h3 {
+            margin-bottom: 8px;
+            font-size: 1.2em;
+            color: var(--text-color);
+        }
+
+        .card p {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            color: var(--secondary-text);
+            flex-grow: 1; /* Allows description to take available space */
+        }
+
+        .card-meta {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 10px;
+        }
+         .card-meta span {
+             display: block; /* Each meta item on a new line */
+         }
+
+        .card-hashtags {
+            margin-bottom: 15px;
+            font-size: 0.85em;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .card-hashtags span {
+            background-color: var(--secondary-bg);
+            color: var(--secondary-text);
+            padding: 3px 8px;
+            border-radius: 100em;
+        }
+
+        .card-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .card-buttons button {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 0px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            /* Allow space for download count */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px; /* Space between text and count */
+        }
+
+        .card-buttons .download-button {
+            background-color: var(--accent-color);
+            color: var(--accent-text-color);
+        }
+         .card-buttons .download-button:hover {
+             background-color: #0056b3; /* Darker accent */
+         }
+         .dark-theme .card-buttons .download-button:hover {
+              background-color: #0b5ed7; /* Darker accent for dark theme */
+          }
+
+        /* Style for the download count */
+        .download-count {
+            font-size: 0.85em;
+            /* background-color: rgba(0,0,0,0.1); */
+            /* padding: 1px 4px; */
+            /* border-radius: 3px; */
+            /* display: inline-block; */ /* Keep it inline */
+             opacity: 0.8;
+             color: var(--download-count-color);
+             font-weight: normal; /* Make count less prominent */
+        }
+
+        .card-buttons .docs-button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+         .card-buttons .docs-button:hover {
+              background-color: var(--button-hover-bg);
+         }
+
+
+        .favorite-button {
+            position: absolute;
+            top: 8px;  /* Adjusted slightly */
+            right: 8px; /* Adjusted slightly */
+            background: rgba(255, 255, 255, 0.7);
+            border: 0px solid var(--card-border);
+            color: var(--text-color);
+            border-radius: 0px;
+            width: 30px;
+            height: 30px;
+            font-size: 1.3em; /* Adjust star size */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, color 0.2s;
+            line-height: 1; /* Ensure vertical centering */
+             z-index: 3; /* Make sure favorite button is on top of new badge if they overlap */
+             /* Remove button default styling inheritance */
+             gap: 0;
+             padding: 0;
+        }
+
+        .dark-theme .favorite-button {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+
+        .favorite-button:hover {
+            background: rgba(220, 220, 220, 0.9);
+        }
+         .dark-theme .favorite-button:hover {
+             background: rgba(80, 80, 80, 0.8);
+         }
+
+
+        .favorite-button.is-favorite {
+            color: #2F3137; /* Gold star color */
+        }
+        .dark-theme .favorite-button.is-favorite {
+        	color: #FFC300;
+        }
+
+
+        .card-id {
+            display: none; /* Hide the ID element */
+        }
+
+        .hashtags-hidden .card-hashtags {
+            display: none;
+        }
+
+        /* --- No Favorites Message --- */
+         #no-favorites-message {
+             border: 2px dashed var(--card-border);
+             padding: 30px;
+             text-align: center;
+             border-radius: 0px;
+             color: var(--secondary-text);
+             width: 100%;
+             font-style: italic;
+         }
+
+
+        /* --- Settings Modal --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0; /* top, right, bottom, left = 0 */
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 0px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .modal-close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: var(--secondary-text);
+            line-height: 1;
+        }
+         .modal-close-button:hover {
+             color: var(--text-color);
+         }
+
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .modal-content .setting {
+            margin-bottom: 4px;
+            display: flex;
+            flex-direction: column; /* Stack label and control */
+        }
+
+        .modal-content label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--secondary-text);
+        }
+
+        .modal-content select,
+        .modal-content button {
+            padding: 10px;
+            border-radius: 0px;
+            border: 1px solid var(--select-border);
+            background-color: var(--select-bg);
+            color: var(--text-color);
+            font-size: 1em;
+        }
+         .modal-content button {
+             background-color: var(--button-bg);
+             color: var(--button-text);
+             cursor: pointer;
+         }
+         .modal-content button:hover {
+              background-color: var(--button-hover-bg);
+         }
+
+
+        /* --- Responsiveness --- */
+        @media (max-width: 768px) {
+             nav {
+                 flex-direction: column; /* Stack nav items vertically */
+                 align-items: stretch; /* Stretch items to full width */
+             }
+             nav > * {
+                 width: 100%; /* Make controls take full width */
+                 margin: 5px 0; /* Adjust margin for vertical layout */
+             }
+             .search-container input {
+                 min-width: unset; /* Remove min-width */
+             }
+             #card-container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust min size */
+             }
+             .modal-content {
+                 width: 95%;
+             }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+             h1 {
+                 font-size: 1.5em;
+             }
+             .container {
+                 width: 100%;
+             }
+             #card-container {
+                grid-template-columns: 1fr; /* Single column on very small screens */
+                gap: 15px;
+             }
+            .card-buttons {
+                flex-direction: column; /* Stack buttons vertically */
+            }
+        }
+
+    </style>
+</head>
+<body class="system-theme">
+    <div class="container">
+        <header>
+        	<br>
+            <h1 data-translate-key="site_title">Ready Scratch Code for TurboWarp</h1>
+        </header>
+
+        <nav>
+            <button id="settings-button" aria-label="Open Settings" class="setButton">
+                 <span class="settings-icon">⚙️</span> <span data-translate-key="settings_button">Settings</span>
+            </button>
+
+            <div>
+                 <label for="filter-select" data-translate-key="filter_label">Show:</label>
+                 <select id="filter-select">
+                     <option value="all" data-translate-key="filter_all">All</option>
+                     <option value="favorites" data-translate-key="filter_favorites">Favorites</option>
+                 </select>
+            </div>
+
+            <div>
+                 <label for="sort-select" data-translate-key="sort_label">Sort:</label>
+                  <select id="sort-select">
+                     <option value="new" data-translate-key="sort_new">New</option> <option value="old" data-translate-key="sort_old">Old</option>
+                     <option value="random" data-translate-key="sort_random">Randomly</option>
+                 </select>
+             </div>
+
+            <div class="search-container">
+                 <span class="search-icon">🔍</span>
+                <input type="search" id="search-input" data-translate-placeholder="search_placeholder" placeholder="Search...">
+                <button class="reset-search" id="reset-search-button" aria-label="Reset Search">&times;</button>
+            </div>
+
+            <br><br>
+
+            <form action="https://spasibomir.ru/" target="_blank">
+             	<button id="tea-button" aria-label="Open Donate">
+                	<span data-translate-key="tea_button">Buy me a coffee, please ☕</span>
+           		</button>
+           	</form>
+        </nav>
+
+        <main>
+            <div id="card-container">
+                </div>
+              <div id="no-favorites-message" style="display: none;" data-translate-key="no_favorites">
+                 No favorite cards yet...
+             </div>
+        </main>
+    </div>
+
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close-button" class="modal-close-button" aria-label="Close Settings">&times;</button>
+            <h2 data-translate-key="settings_title">Settings</h2>
+
+              <div class="setting">
+                <label for="language-select" data-translate-key="language_label">Site Language:</label>
+                <select id="language-select">
+                    <option value="en">English</option>
+                    <option value="ru">Русский</option>
+                </select>
+                 </div>
+
+            <br>
+
+            <div class="setting">
+                <label for="theme-select" data-translate-key="theme_label">Site Theme:</label>
+                <select id="theme-select">
+                    <option value="system" data-translate-key="theme_system">System</option>
+                     <option value="light" data-translate-key="theme_light">Light Mode</option>
+                    <option value="dark" data-translate-key="theme_dark">Dark Mode</option>
+                </select>
+            </div>
+
+            <br>
+
+            <div class="setting">
+                  <label data-translate-key="hashtags_label">Hashtags:</label>
+                 <button id="toggle-hashtags-button" data-translate-key="toggle_hashtags_show">Show Hashtags</button>
+             </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Card Data ---
+        // Add your card data here. It's easy to add new cards by adding new objects to this array.
+        const cardData = [
+        	// #1 (Button PRO (v-1))
+            {
+                id: 1,
+                imageUrl: 'images/Frame.svg',
+                title_en: 'Button PRO (v-1)',
+                title_ru: 'Кнопка PRO (v-1)',
+                description_en: 'Ready-made button code that functions the same as the ❬button❭❬/button❭.',
+                description_ru: 'Готовый код кнопки, которая функционирует также как и кнопка ❬button❭❬/button❭.',
+                date: '18.04.2025',
+                author_en: '* Melentyev Richard (RIHART / WAYLIVES)',
+                author_ru: '* Мелентьев Ричард (RIHART / WAYLIVES)',
+                hashtags: ['#button', '#click', '#кнопка', '#pro', '#про', '#v1', '#v-1', '#v.1', '#клик', '#Melentyev', '#Richard', '#RIHART', '#WAYLIVES', '#Мелентьев', '#Ричард'],
+                downloadUrl: 'files/Button PRO/Button PRO (ru-v.1).sb3',
+                docsUrl: '#'
+            },
+
+            // #2 (Data (v-1))
+            {
+                id: 2,
+                imageUrl: 'images/Frame.svg',
+                title_en: 'Data (v-1)',
+                title_ru: 'Дата (v-1)',
+                description_en: 'A list-based inventory system to store and manage items.',
+                description_ru: 'Дата отображается в переменной.',
+                date: '18.04.2025',
+                author_en: '* Melentyev Richard (RIHART / WAYLIVES)',
+                author_ru: '* Мелентьев Ричард (RIHART / WAYLIVES)',
+                hashtags: ['#data', '#дата', '#time', '#время', '#v1', '#v-1', '#v.1', '#Melentyev', '#Richard', '#RIHART', '#WAYLIVES', '#Мелентьев', '#Ричард'],
+                downloadUrl: 'files/Data/Data (ru-v.1).sb3',
+                docsUrl: '#'
+            },
+
+            // #3 (Time (v-1))
+            {
+                id: 3,
+                imageUrl: 'images/Frame.svg',
+                title_en: 'Time (v-1)',
+                title_ru: 'Время (v-1)',
+                description_en: 'Render custom fonts or styled text on the stage.',
+                description_ru: 'Отрисовка пользовательских шрифтов или стилизованного текста на сцене.',
+                date: '19.04.2025',
+                author_en: '* Melentyev Richard (RIHART / WAYLIVES)',
+                author_ru: '* Мелентьев Ричард (RIHART / WAYLIVES)',
+                hashtags: ['#time', '#время', '#часы', '#clock', '#v1', '#v-1', '#v.1', '#Melentyev', '#Richard', '#RIHART', '#WAYLIVES', '#Мелентьев', '#Ричард'],
+                downloadUrl: 'files/Time/Time (ru-v.1).sb3',
+                docsUrl: '#'
+            },
+
+            // #4 (Text (v-1))
+            {
+                id: 4,
+                imageUrl: 'images/Frame.svg',
+                title_en: 'Text (v-1)',
+                title_ru: 'Текст (v-1)',
+                description_en: 'Render custom fonts or styled text on the stage.',
+                description_ru: 'Отрисовка пользовательских шрифтов или стилизованного текста на сцене.',
+                date: '20.04.2025',
+                author_en: '* Melentyev Richard (RIHART / WAYLIVES)',
+                author_ru: '* Мелентьев Ричард (RIHART / WAYLIVES)',
+                hashtags: ['#text', '#текст', '#ввод', '#набор', '#клавиши', '#клавиатура', '#печатать', '#keys', '#v1', '#v-1', '#v.1', '#Melentyev', '#Richard', '#RIHART', '#WAYLIVES', '#Мелентьев', '#Ричард'],
+                downloadUrl: 'files/Text/Text (ru-v.1).sb3',
+                docsUrl: '#'
+            },
+            
+        ];
+        // --- Translations ---
+        const translations = {
+            en: {
+                site_title: "Ready Scratch Code for TurboWarp",
+                settings_button: "Settings",
+                filter_label: "Show:",
+                filter_all: "All", // Base text, count will be added
+                filter_favorites: "Favorites", // Base text, count will be added
+                sort_label: "Sort:",
+                sort_new: "New",
+                sort_old: "Old",
+                sort_random: "Randomly",
+                search_placeholder: "Search...",
+                tea_button: "Buy me a coffee, please ☕",
+                no_favorites: "No favorite cards yet...",
+                settings_title: "Settings",
+                language_label: "Site Language:",
+                theme_label: "Site Theme:",
+                theme_system: "System Mode",
+                theme_light: "Light Mode",
+                theme_dark: "Dark Mode",
+                hashtags_label: "Hashtags:",
+                toggle_hashtags_show: "Show Hashtags",
+                toggle_hashtags_hide: "Hide Hashtags",
+                download_button: "Download", // Base text, count will be added dynamically
+                docs_button: "Detailed",
+                author_prefix: "<b>Author:</b><br>",
+                date_prefix: "———<br><b>Created (day.month.year):</b><br>",
+                new_badge: "New" // Translation for the badge
+             },
+            ru: {
+                site_title: "Готовый Scratch-код для TurboWarp",
+                settings_button: "Настройки",
+                filter_label: "Показать:",
+                filter_all: "Все", // Base text, count will be added
+                filter_favorites: "Избранные", // Base text, count will be added
+                sort_label: "Сортировка:",
+                sort_new: "Новые",
+                sort_old: "Старые",
+                sort_random: "Случайно",
+                search_placeholder: "Поиск...",
+                tea_button: "Купите мне пирожок, пожалуйста 😋",
+                no_favorites: "Пока нет избранных плашек...",
+                settings_title: "Настройки",
+                language_label: "Язык сайта:",
+                theme_label: "Тема сайта:",
+                theme_system: "Системный режим",
+                theme_light: "Светлый режим",
+                theme_dark: "Тёмный режим",
+                hashtags_label: "Хештеги:",
+                toggle_hashtags_show: "Показать Хештеги",
+                toggle_hashtags_hide: "Скрыть Хештеги",
+                download_button: "Скачать", // Base text, count will be added dynamically
+                docs_button: "Подробнее",
+                author_prefix: "<b>Автор:</b><br>",
+                date_prefix: "———<br><b>Создано (день.месяц.год):</b><br>",
+                 new_badge: "Новое" // Translation for the badge
+            }
+         };
+        // --- DOM Elements ---
+        const body = document.body;
+        const cardContainer = document.getElementById('card-container');
+        const settingsButton = document.getElementById('settings-button');
+        const settingsModal = document.getElementById('settings-modal');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const languageSelect = document.getElementById('language-select');
+        const themeSelect = document.getElementById('theme-select');
+        const toggleHashtagsButton = document.getElementById('toggle-hashtags-button');
+        const filterSelect = document.getElementById('filter-select');
+        const sortSelect = document.getElementById('sort-select');
+        const searchInput = document.getElementById('search-input');
+        const resetSearchButton = document.getElementById('reset-search-button');
+        const noFavoritesMessage = document.getElementById('no-favorites-message');
+
+        // --- State Variables ---
+        let currentLanguage = 'en'; // Default language
+        let currentTheme = 'system'; // Default theme
+        let showHashtags = false; // Default: hashtags hidden
+        let filterType = 'all'; // Default filter
+        let sortOrder = 'new'; // Default sort order is now 'new'
+        let favorites = []; // Array to store favorite card IDs
+        let downloadCounts = {}; // Object to store download counts { cardId: count }
+        let currentSearchTerm = '';
+        // --- LocalStorage Functions ---
+        const saveSetting = (key, value) => {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.error("Error saving to localStorage:", key, e);
+            }
+        };
+
+        const loadSetting = (key, defaultValue) => {
+            try {
+                const savedValue = localStorage.getItem(key);
+                return savedValue !== null ? JSON.parse(savedValue) : defaultValue;
+            } catch (e) {
+                console.error("Error loading from localStorage:", key, e);
+                return defaultValue;
+            }
+        };
+        // --- Core Functions ---
+
+        function applyTheme(theme) {
+            body.classList.remove('light-theme', 'dark-theme', 'system-theme');
+            if (theme === 'light') {
+                body.classList.add('light-theme');
+            } else if (theme === 'dark') {
+                body.classList.add('dark-theme');
+            } else {
+                body.classList.add('system-theme'); // Handles system preference via CSS
+            }
+            currentTheme = theme;
+            saveSetting('theme', theme);
+        }
+
+        function applyHashtagVisibility(show) {
+            const translationKey = show ? 'toggle_hashtags_hide' : 'toggle_hashtags_show';
+            if (show) {
+                body.classList.remove('hashtags-hidden');
+            } else {
+                body.classList.add('hashtags-hidden');
+            }
+             // Get base translation first
+             toggleHashtagsButton.textContent = getTranslation(translationKey);
+             toggleHashtagsButton.setAttribute('data-translate-key', translationKey); // Update key if needed
+
+            showHashtags = show;
+            saveSetting('showHashtags', show);
+        }
+
+        function getTranslation(key, lang = currentLanguage) {
+             // Try specific language, then fallback to English, then return the key itself
+            return translations[lang]?.[key] || translations.en[key] || key;
+        }
+
+         // --- NEW: Function to update counts in Filter dropdown ---
+         function updateFilterOptionCounts() {
+             const allOption = filterSelect.querySelector('option[value="all"]');
+             const favOption = filterSelect.querySelector('option[value="favorites"]');
+             const totalCards = cardData.length;
+             const favCount = favorites.length;
+
+             if (allOption) {
+                 const baseText = getTranslation('filter_all');
+                 allOption.textContent = `${baseText} (${totalCards})`;
+             }
+             if (favOption) {
+                 const baseText = getTranslation('filter_favorites');
+                 favOption.textContent = `${baseText} (${favCount})`;
+             }
+         }
+
+        function translateUI() {
+            // Translate elements with data-translate-key
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.getAttribute('data-translate-key');
+                const translation = getTranslation(key);
+
+                 // Skip filter options, handled separately by updateFilterOptionCounts
+                 if (element.parentElement === filterSelect) {
+                      // We'll update these with counts later
+                     return;
+                 }
+
+                 // Handle input placeholders
+                 if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                      // Check if it's the special data-translate-placeholder attribute
+                      if(element.hasAttribute('data-translate-placeholder')) {
+                          const placeholderKey = element.getAttribute('data-translate-placeholder');
+                          element.placeholder = getTranslation(placeholderKey);
+                      }
+                 }
+                 // Handle button text (avoiding specific dynamic buttons if needed)
+                 else if (element.tagName === 'BUTTON' || element.tagName === 'SPAN' || element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'LABEL' || element.tagName === 'DIV') {
+                     // Avoid overwriting dynamic button text like toggle-hashtags
+                     if (element.id !== 'toggle-hashtags-button') {
+                         // Preserve child elements (like icons in spans) if they exist
+                         if (element.children.length > 0 && element.querySelector('span[data-translate-key]')) {
+                             const textSpan = element.querySelector('span[data-translate-key]');
+                             if (textSpan) textSpan.textContent = translation;
+                         } else if (element.children.length === 0 || !element.children[0].matches('span')) { // Avoid replacing icon spans
+                             element.textContent = translation;
+                         }
+                         // If it's a span with the key itself, update it
+                         else if (element.tagName === 'SPAN' && element.getAttribute('data-translate-key') === key){
+                            element.textContent = translation;
+                         }
+                     }
+                 }
+                 // Handle specific options in selects (excluding the filter select)
+                 else if (element.tagName === 'OPTION' && element.closest('select') !== filterSelect) {
+                    element.textContent = translation;
+                 }
+            });
+
+            // Update dynamic button text like the hashtag toggle
+            applyHashtagVisibility(showHashtags); // Re-apply to get correct translated text
+
+            // --- NEW: Update counts in the filter dropdown after translating ---
+            updateFilterOptionCounts();
+
+            // Set HTML lang attribute
+            document.documentElement.lang = currentLanguage;
+
+            // Re-render cards to apply language changes within cards (titles, descriptions, buttons)
+            renderCards();
+        }
+
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            saveSetting('language', lang);
+            languageSelect.value = lang; // Update dropdown selection
+            translateUI(); // This will re-render cards and update filter counts
+        }
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            // While there remain elements to shuffle.
+            while (currentIndex !== 0) {
+                // Pick a remaining element.
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function renderCards() {
+            cardContainer.innerHTML = ''; // Clear existing cards
+            noFavoritesMessage.style.display = 'none'; // Hide message initially
+
+            // --- GET TODAY'S DATE ---
+            const today = new Date();
+            const todayDDMMYYYY = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
+            const todayYYYYMMDD = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            // --- END GET TODAY'S DATE ---
+
+            let filteredData = cardData;
+            // 1. Filter by Favorites
+            if (filterType === 'favorites') {
+                filteredData = cardData.filter(card => favorites.includes(card.id));
+            }
+
+            // 2. Filter by Search Term
+             const searchTerm = currentSearchTerm.toLowerCase().trim();
+             if (searchTerm) {
+                filteredData = filteredData.filter(card => {
+                    const title = card[`title_${currentLanguage}`]?.toLowerCase() || card.title_en.toLowerCase();
+                    const author = card[`author_${currentLanguage}`]?.toLowerCase() || card.author_en.toLowerCase();
+                    const description = card[`description_${currentLanguage}`]?.toLowerCase() || card.description_en.toLowerCase();
+                    const hashtags = card.hashtags.join(' ').toLowerCase();
+                    return title.includes(searchTerm) || author.includes(searchTerm) || hashtags.includes(searchTerm) || description.includes(searchTerm);
+                });
+             }
+
+
+            // 3. Sort Data
+            let sortedData;
+            if (sortOrder === 'random') {
+                // Create a shallow copy before shuffling
+                 sortedData = shuffleArray([...filteredData]);
+            } else if (sortOrder === 'new') { // Sort by ID descending (Newest first)
+                 sortedData = [...filteredData].sort((a, b) => b.id - a.id);
+            } else { // 'old' sort by ID ascending (Oldest first)
+                 sortedData = [...filteredData].sort((a, b) => a.id - b.id);
+            }
+
+
+            // 4. Check if Favorites is empty (after filtering)
+            if (filterType === 'favorites' && sortedData.length === 0) {
+                noFavoritesMessage.style.display = 'block';
+                return; // Stop rendering if no favorites to show
+            }
+
+
+            // 5. Create and Append Card Elements
+            sortedData.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.dataset.id = card.id; // Store ID on the element
+
+                const isFavorite = favorites.includes(card.id);
+
+                // --- CHECK FOR NEW BADGE ---
+                let newBadgeHTML = '';
+                // Simple date check (assumes specific formats)
+                if (card.date === todayDDMMYYYY || card.date === todayYYYYMMDD) {
+                    newBadgeHTML = `<div class="new-badge">${getTranslation('new_badge')}</div>`;
+                }
+                // --- END CHECK FOR NEW BADGE ---
+
+                // --- Get Download Count (from our client-side state) ---
+                const count = downloadCounts[card.id] || 0;
+                // ---
+
+                cardElement.innerHTML = `
+                    ${newBadgeHTML} <span class="card-id">${card.id}</span>
+                    <button class="favorite-button ${isFavorite ? 'is-favorite' : ''}" data-id="${card.id}" aria-label="${isFavorite ? getTranslation('remove_favorite_label', 'en') : getTranslation('add_favorite_label', 'en')}">
+                         ${isFavorite ? '★' : '☆'}
+                     </button>
+                     <div class="card-image-container">
+                         <img src="${card.imageUrl}" alt="${card[`title_${currentLanguage}`] || card.title_en} preview" loading="lazy">
+                     </div>
+                    <h3>${card[`title_${currentLanguage}`] || card.title_en}</h3>
+                    <p>${card[`description_${currentLanguage}`] || card.description_en}</p>
+                    <div class="card-meta">
+                         <span class="author">${getTranslation('author_prefix')} ${card[`author_${currentLanguage}`] || card.author_en}</span>
+                         <span class="date">${getTranslation('date_prefix')} ${card.date}</span>
+                     </div>
+                     <div class="card-hashtags">
+                         ${card.hashtags.map(tag => `<span>${tag}</span>`).join('')}
+                     </div>
+                     <div class="card-buttons">
+                         <button class="download-button" data-id="${card.id}" data-url="${card.downloadUrl}">
+                             <span data-translate-key="download_button">${getTranslation('download_button')}</span>
+                             <span class="download-count">(${count})</span>
+                         </button>
+                         <button class="docs-button" data-url="${card.docsUrl}">
+                              <span data-translate-key="docs_button">${getTranslation('docs_button')}</span>
+                         </button>
+                     </div>
+                `;
+                cardContainer.appendChild(cardElement);
+            });
+            // Re-apply hashtag visibility class (needed if renderCards called without page reload)
+            applyHashtagVisibility(showHashtags);
+        }
+
+
+        function toggleFavorite(id) {
+            const idNum = parseInt(id, 10);
+            const index = favorites.indexOf(idNum);
+            let wasFavorite;
+
+            if (index > -1) {
+                favorites.splice(index, 1); // Remove from favorites
+                wasFavorite = true;
+            } else {
+                favorites.push(idNum); // Add to favorites
+                wasFavorite = false;
+            }
+            saveSetting('favorites', favorites);
+
+            // Update button appearance directly
+             const button = cardContainer.querySelector(`.favorite-button[data-id="${id}"]`);
+             if (button) {
+                 button.textContent = wasFavorite ? '☆' : '★';
+                 button.classList.toggle('is-favorite', !wasFavorite);
+                 // Consider adding translated aria-labels here later if needed
+             }
+
+             // Update filter counts
+             updateFilterOptionCounts();
+
+             // If viewing favorites, re-render to remove/add the card instantly
+             if (filterType === 'favorites') {
+                 renderCards();
+             }
+             // Otherwise, no full re-render needed just for favorite toggle
+        }
+
+        // --- Event Listeners ---
+
+        // Settings Modal
+        settingsButton.addEventListener('click', () => {
+             settingsModal.style.display = 'flex';
+        });
+        modalCloseButton.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+        settingsModal.addEventListener('click', (event) => {
+            // Close modal if clicking on the overlay itself
+            if (event.target === settingsModal) {
+                settingsModal.style.display = 'none';
+            }
+        });
+        // Language Change
+        languageSelect.addEventListener('change', (event) => {
+            setLanguage(event.target.value);
+           // settingsModal.style.display = 'none'; // Optional: close modal on change
+        });
+        // Theme Change
+        themeSelect.addEventListener('change', (event) => {
+            applyTheme(event.target.value);
+            //settingsModal.style.display = 'none'; // Optional: close modal on change
+        });
+        // Hashtags Toggle
+        toggleHashtagsButton.addEventListener('click', () => {
+            applyHashtagVisibility(!showHashtags); // Toggle the current state
+             //settingsModal.style.display = 'none'; // Optional: close modal on change
+        });
+        // Filter Change
+         filterSelect.addEventListener('change', (event) => {
+             filterType = event.target.value;
+             saveSetting('filterType', filterType);
+             renderCards();
+         });
+        // Sort Change
+          sortSelect.addEventListener('change', (event) => {
+              sortOrder = event.target.value;
+              saveSetting('sortOrder', sortOrder);
+              renderCards();
+          });
+        // Search Input
+          searchInput.addEventListener('input', (event) => {
+              currentSearchTerm = event.target.value;
+              resetSearchButton.style.display = currentSearchTerm ? 'block' : 'none';
+              renderCards(); // Re-render on search input
+          });
+        // Reset Search Button
+          resetSearchButton.addEventListener('click', () => {
+              searchInput.value = '';
+              currentSearchTerm = '';
+              resetSearchButton.style.display = 'none';
+              renderCards(); // Re-render after clearing search
+          });
+        // Card Button Clicks (Event Delegation)
+        cardContainer.addEventListener('click', (event) => {
+             // Find the closest button element that was clicked or contains the clicked element
+             const button = event.target.closest('button');
+             if (!button) return; // Exit if the click wasn't on or inside a button
+
+             const cardElement = button.closest('.card');
+             const cardId = cardElement?.dataset.id; // Get ID from parent card
+
+             // Favorite Button
+             if (button.classList.contains('favorite-button') && cardId) {
+                  toggleFavorite(cardId);
+             }
+
+             // Download Button
+              if (button.classList.contains('download-button') && cardId) {
+                  const url = button.dataset.url;
+                  if (url && url !== '#') {
+                      // 1. Increment Count (Client-Side)
+                      const numericCardId = parseInt(cardId, 10);
+                      downloadCounts[numericCardId] = (downloadCounts[numericCardId] || 0) + 1;
+                      saveSetting('downloadCounts', downloadCounts); // Save updated counts
+
+                      // 2. Update Button Text
+                      const countSpan = button.querySelector('.download-count');
+                      if (countSpan) {
+                          countSpan.textContent = `(${downloadCounts[numericCardId]})`;
+                      }
+
+                      // 3. Trigger Download
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.setAttribute('download', ''); // Use browser default name or extract from URL
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      console.log(`Download requested: ${url} (Count: ${downloadCounts[numericCardId]})`);
+
+                      // --- IMPORTANT ---
+                      // For a *global* count visible to all users, you would need
+                      // to make an asynchronous request (e.g., using fetch) here
+                      // to a server endpoint. The server would increment the count
+                      // in a database and optionally return the new global count.
+                      // Example (pseudo-code):
+                      // fetch('/api/increment-download', {
+                      //     method: 'POST',
+                      //     headers: { 'Content-Type': 'application/json' },
+                      //     body: JSON.stringify({ cardId: numericCardId })
+                      // })
+                      // .then(response => response.json())
+                      // .then(data => {
+                      //      console.log('Global count updated on server:', data.newCount);
+                      //      // Optionally update the button with the global count if needed
+                      //      // countSpan.textContent = `(${data.newCount})`;
+                      // })
+                      // .catch(error => console.error('Error updating global count:', error));
+                      // --- END IMPORTANT ---
+
+                  } else {
+                      alert('Download link not available.');
+                  }
+              }
+
+
+              // Documentation Button
+               if (button.classList.contains('docs-button')) {
+                   const url = button.dataset.url;
+                   if (url && url !== '#') {
+                       window.open(url, '_blank'); // Open in new tab
+                   } else {
+                      alert('Documentation link not available.');
+                   }
+               }
+        });
+        // System Theme Change Listener
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        prefersDarkScheme.addEventListener('change', () => {
+            if (currentTheme === 'system') {
+                // Re-apply theme to potentially switch between light/dark
+                 applyTheme('system'); // Re-applying system will let CSS handle it
+            }
+        });
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load settings from localStorage
+            currentLanguage = loadSetting('language', 'en'); // Default English if not set
+            currentTheme = loadSetting('theme', 'system');
+            showHashtags = loadSetting('showHashtags', false);
+            filterType = loadSetting('filterType', 'all');
+            sortOrder = loadSetting('sortOrder', 'new'); // Default to 'new'
+            favorites = loadSetting('favorites', []);
+            downloadCounts = loadSetting('downloadCounts', {}); // Load download counts
+
+             // Apply loaded settings to UI elements
+             languageSelect.value = currentLanguage;
+             themeSelect.value = currentTheme;
+             filterSelect.value = filterType;
+             sortSelect.value = sortOrder; // Ensure sort dropdown reflects loaded value
+
+
+            // Apply initial state
+            applyTheme(currentTheme); // Apply theme first
+            setLanguage(currentLanguage); // Applies language, updates filter counts, and triggers initial render
+
+            // Note: applyHashtagVisibility is called within translateUI/renderCards
+
+            console.log("Website Initialized");
+        });
+
+    </script>
+
+</body>
+</html>

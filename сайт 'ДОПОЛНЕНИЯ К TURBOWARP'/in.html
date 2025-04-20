@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализатор Сайтов</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px); /* Учитываем padding и border */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #stats-area {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            min-height: 100px; /* Placeholder height */
+            text-align: left;
+            color: #555;
+        }
+        #stats-area p {
+            color: #d9534f; /* Цвет для сообщения об ошибке/невозможности */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Введите URL сайта для анализа</h1>
+        <input type="text" id="websiteUrl" placeholder="Например: https://www.google.com">
+        <button onclick="getStats()">Показать статистику</button>
+
+        <div id="stats-area">
+            <p>
+                Здесь отобразятся данные статистики, если бы их можно было получить.<br>
+                К сожалению, получение реальной статистики просмотров любого сайта без доступа к его системам аналитики технически невозможно.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function getStats() {
+            const urlInput = document.getElementById('websiteUrl');
+            const statsArea = document.getElementById('stats-area');
+            const url = urlInput.value.trim();
+
+            if (url === "") {
+                alert("Пожалуйста, введите URL.");
+                return;
+            }
+
+            // В этом месте в реальном приложении был бы запрос к вашему серверу
+            // (бэкенду), который бы попытался получить данные.
+            // Но, как уже говорилось, получить РЕАЛЬНУЮ статистику для ЛЮБОГО сайта
+            // невозможно.
+
+            statsArea.innerHTML = `
+                <p style="color: #337ab7;">Попытка получить данные для: <strong>${url}</strong></p>
+                <p style="color: #d9534f; font-weight: bold;">
+                    Получение реальной статистики просмотров для этого сайта технически невозможно без доступа к его системам аналитики.
+                </p>
+                <p style="color: #555;">
+                    Системы аналитики (как Google Analytics) и серверные логи являются приватными данными владельца сайта.
+                </p>
+            `;
+
+            // Если бы у вас был бэкенд и способ получать какую-то информацию (например,
+            // статус доступности сайта, мета-описание и т.д., что не является реальной
+            // статистикой просмотров), вы бы отправили сюда fetch/XMLHttpRequest запрос:
+            /*
+            fetch('/api/getWebsiteInfo?url=' + encodeURIComponent(url))
+                .then(response => response.json())
+                .then(data => {
+                    // Здесь обработка полученных данных и их красивое отображение (графики и т.д.)
+                    // Но эти данные НЕ будут реальными просмотрами.
+                    statsArea.innerHTML = '<h2>Данные получены (не реальные просмотры):</h2>' + JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    statsArea.innerHTML = '<p style="color: red;">Ошибка при попытке получения данных (или данные недоступны).</p>';
+                    console.error('Error:', error);
+                });
+            */
+        }
+    </script>
+</body>
+</html>
